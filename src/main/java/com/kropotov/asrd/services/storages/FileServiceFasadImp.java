@@ -1,46 +1,22 @@
-package com.kropotov.asrd.services.springdatajpa.docs;
+package com.kropotov.asrd.services.storages;
 
 import com.kropotov.asrd.entities.docs.File;
 import com.kropotov.asrd.entities.docs.util.FileType;
-import com.kropotov.asrd.repositories.FileRepository;
-import com.kropotov.asrd.services.FileService;
-
-
-import io.minio.MinioClient;
-import io.minio.PutObjectOptions;
-import io.minio.errors.*;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.beans.factory.annotation.Value;
+import com.kropotov.asrd.services.FileServiceFasad;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.Objects;
 
-@Slf4j
-@Service
-@Transactional
-@RequiredArgsConstructor
-public class FileServiceImpl implements FileService {
+public class FileServiceFasadImp implements FileServiceFasad {
 
-    @Value("${storage.location}")
-    private Path storePath;
-
-    private final FileRepository fileRepository;
-    private final MinioClient minioClient;
 
     private void putFileInStorage(MultipartFile file, String fileName, String bucket) throws IOException {
         Path targetLocation = storePath.resolve(fileName);
@@ -120,34 +96,23 @@ public class FileServiceImpl implements FileService {
         }
     }
 
-
     @Override
-    public Optional<File> getById(Long aLong) {
-        return fileRepository.findById(aLong);
-    }
-
-
-    @Override
-    public File save(File object) {
-        return fileRepository.save(object);
-    }
-
-    @Override
-    public Optional<List<File>> getAll() {
-        if (fileRepository.findAll() == null) {
-            return Optional.empty();
-        } else {
-            return Optional.of(fileRepository.findAll());
+    public void uploadFile (MultipartFile file, String userFileName, FileType type) throws IOException {
+        if (file.getBytes().length != 0) {
+            String fileName = type.getDirectory() + currentDate() + "." + determineFileExtension(file);
+            putFileInStorage(file, fileName, type.getDirectory());
+             save(new File(fileName, userFileName, type));
         }
     }
 
     @Override
-    public void deleteById(Long aLong) {
-        removeFromStorage(aLong);
-        fileRepository.deleteById(aLong);
+    public byte[] downloadFile(Long id) {
+        return new byte[0];
     }
-    // TODO: 28.05.2020
-    //  выгрузка файла как картинки для представления на фронте  public BufferedImage loadFile(String id) {}
-    //  удаление файла из БД и физического хранилища
-    //  реализовать хранение файлов в MINIO + работу с эти сервисом.
+
+    @Override
+    public void deleteFile(Long id) {
+
+    }
+
 }
