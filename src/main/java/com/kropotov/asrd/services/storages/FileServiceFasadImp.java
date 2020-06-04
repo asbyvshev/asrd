@@ -3,60 +3,27 @@ package com.kropotov.asrd.services.storages;
 import com.kropotov.asrd.entities.docs.File;
 import com.kropotov.asrd.entities.docs.util.FileType;
 import com.kropotov.asrd.services.FileServiceFasad;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 
+@Slf4j
+@Service
+@RequiredArgsConstructor
 public class FileServiceFasadImp implements FileServiceFasad {
 
-
-    private void putFileInStorage(MultipartFile file, String fileName, String bucket) throws IOException {
-        Path targetLocation = storePath.resolve(fileName);
-        Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
-        log.info("File {} has been succesfully uploaded!", fileName);
-
-        // TODO: 31.05.2020  MINIO
-        //        InputStream stream = file.getInputStream();
-        //        Long fileSize = file.getSize();
-        //        PutObjectOptions options = new PutObjectOptions(fileSize, fileSize);
-        //        try {
-        //            minioClient.putObject(bucket,fileName,stream,options);
-        //        } catch (ErrorResponseException e) {
-        //            e.printStackTrace();
-        //        } catch (InsufficientDataException e) {
-        //            e.printStackTrace();
-        //        } catch (InternalException e) {
-        //            e.printStackTrace();
-        //        } catch (InvalidBucketNameException e) {
-        //            e.printStackTrace();
-        //        } catch (InvalidKeyException e) {
-        //            e.printStackTrace();
-        //        } catch (InvalidResponseException e) {
-        //            e.printStackTrace();
-        //        } catch (NoSuchAlgorithmException e) {
-        //            e.printStackTrace();
-        //        } catch (XmlParserException e) {
-        //            e.printStackTrace();
-        //        }
-
-
-    }
-
-    private boolean removeFromStorage (Long id){
-        File file = fileRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("Oops! Review " + id + " wasn't found!")
-        );
-
-        return true;
-    }
+    private final FileServiceImpl fileService;
+    private final MinIOSeviceImp minIOSevice;
 
     private String currentDate(){
         Date data = new Date();
@@ -85,34 +52,28 @@ public class FileServiceFasadImp implements FileServiceFasad {
         }
     }
 
-
-    public File uploadFile (MultipartFile file, String userFileName, FileType type) throws IOException {
-        if (file.getBytes().length != 0) {
-            String fileName = type.getDirectory() + currentDate() + "." + determineFileExtension(file);
-            putFileInStorage(file, fileName, type.getDirectory());
-            return save(new File(fileName, userFileName, type));
-        } else {
-            return null;
-        }
-    }
-
     @Override
     public void uploadFile (MultipartFile file, String userFileName, FileType type) throws IOException {
-        if (file.getBytes().length != 0) {
-            String fileName = type.getDirectory() + currentDate() + "." + determineFileExtension(file);
-            putFileInStorage(file, fileName, type.getDirectory());
-             save(new File(fileName, userFileName, type));
-        }
+        Assert.notNull(file,"fdgdfg");
+        String fileName = type.getDirectory() + currentDate() + "." + determineFileExtension(file);
+        minIOSevice.uploadFile(file, fileName, type.getDirectory());
+        fileService.save(new File(fileName, userFileName, type));
     }
 
     @Override
     public byte[] downloadFile(Long id) {
-        return new byte[0];
+        File file = fileService.getById(id).get();
+        String bucket = file.getType().getDirectory();
+        String filename = file.getTitle();
+        return minIOSevice.downloadFile(bucket,filename);
     }
 
     @Override
     public void deleteFile(Long id) {
-
+        File file = fileService.getById(id).get();
+        String bucket = file.getType().getDirectory();
+        String filename = file.getTitle();
+        minIOSevice.deleteFile(bucket,filename);
+        fileService.deleteById(id);
     }
-
 }
