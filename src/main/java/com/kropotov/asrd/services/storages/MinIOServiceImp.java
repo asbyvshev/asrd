@@ -9,7 +9,9 @@ import io.minio.messages.Item;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
+
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,7 +22,7 @@ import java.security.NoSuchAlgorithmException;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class MinIOSeviceImp implements MinIOService {
+public class MinIOServiceImp implements MinIOService {
 
     private final MinioClient minioClient;
 
@@ -32,6 +34,7 @@ public class MinIOSeviceImp implements MinIOService {
         PutObjectOptions options = new PutObjectOptions(fileSize, fileSize);
         try {
             minioClient.putObject(bucketname,filename,stream,options);
+            log.info("File {} has been succesfully uploaded!", filename);
         } catch (ErrorResponseException e) {
             e.printStackTrace();
         } catch (InsufficientDataException e) {
@@ -50,27 +53,29 @@ public class MinIOSeviceImp implements MinIOService {
             e.printStackTrace();
         }
 
-        log.info("File {} has been succesfully uploaded!", filename);
-    }
-
-    @Override
-    public byte[] downloadFile(String bucketname, String filename) {
-        return new byte[0];
-    }
-
-    @Override
-    public void deleteFile(String bucketname, String filename) {
 
     }
 
     @Override
-    public void makeBucket(String bucketname) {
-
+    public byte[] downloadFile(String bucketname, String filename) throws IOException, InvalidKeyException, InvalidResponseException, InsufficientDataException, NoSuchAlgorithmException, InternalException, XmlParserException, InvalidBucketNameException, ErrorResponseException {
+        InputStream inputStream = minioClient.getObject(bucketname,filename);
+        byte[] bytes = StreamUtils.copyToByteArray(inputStream);
+        return bytes;
     }
 
     @Override
-    public void removeBucket(String bucketname) {
+    public void deleteFile(String bucketname, String filename) throws IOException, InvalidKeyException, InvalidResponseException, InsufficientDataException, NoSuchAlgorithmException, InternalException, XmlParserException, InvalidBucketNameException, ErrorResponseException {
+        minioClient.removeObject(bucketname,filename);
+    }
 
+    @Override
+    public void makeBucket(String bucketname) throws IOException, InvalidKeyException, InvalidResponseException, RegionConflictException, InsufficientDataException, NoSuchAlgorithmException, InternalException, XmlParserException, InvalidBucketNameException, ErrorResponseException {
+        minioClient.makeBucket(bucketname);
+    }
+
+    @Override
+    public void removeBucket(String bucketname) throws IOException, InvalidKeyException, InvalidResponseException, InsufficientDataException, NoSuchAlgorithmException, InternalException, XmlParserException, InvalidBucketNameException, ErrorResponseException {
+        minioClient.removeBucket(bucketname);
     }
 
 
