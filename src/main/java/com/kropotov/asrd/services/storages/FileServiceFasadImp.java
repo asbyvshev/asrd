@@ -4,15 +4,19 @@ import com.kropotov.asrd.entities.docs.File;
 import com.kropotov.asrd.entities.docs.util.FileType;
 import com.kropotov.asrd.services.FileServiceFasad;
 
+import io.minio.errors.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
@@ -23,7 +27,7 @@ import java.util.Objects;
 public class FileServiceFasadImp implements FileServiceFasad {
 
     private final FileServiceImpl fileService;
-    private final MinIOSeviceImp minIOSevice;
+    private final MinIOServiceImp minIOService;
 
     private String currentDate(){
         Date data = new Date();
@@ -56,16 +60,38 @@ public class FileServiceFasadImp implements FileServiceFasad {
     public void uploadFile (MultipartFile file, String userFileName, FileType type) throws IOException {
         Assert.notNull(file,"fdgdfg");
         String fileName = type.getDirectory() + currentDate() + "." + determineFileExtension(file);
-        minIOSevice.uploadFile(file, fileName, type.getDirectory());
+        minIOService.uploadFile(file, fileName, type.getDirectory());
         fileService.save(new File(fileName, userFileName, type));
     }
 
     @Override
+    @Transactional
     public byte[] downloadFile(Long id) {
         File file = fileService.getById(id).get();
         String bucket = file.getType().getDirectory();
         String filename = file.getTitle();
-        return minIOSevice.downloadFile(bucket,filename);
+        try {
+            return minIOService.downloadFile(bucket,filename);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (InvalidResponseException e) {
+            e.printStackTrace();
+        } catch (InsufficientDataException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (InternalException e) {
+            e.printStackTrace();
+        } catch (XmlParserException e) {
+            e.printStackTrace();
+        } catch (InvalidBucketNameException e) {
+            e.printStackTrace();
+        } catch (ErrorResponseException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override
@@ -73,7 +99,27 @@ public class FileServiceFasadImp implements FileServiceFasad {
         File file = fileService.getById(id).get();
         String bucket = file.getType().getDirectory();
         String filename = file.getTitle();
-        minIOSevice.deleteFile(bucket,filename);
+        try {
+            minIOService.deleteFile(bucket,filename);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (InvalidResponseException e) {
+            e.printStackTrace();
+        } catch (InsufficientDataException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (InternalException e) {
+            e.printStackTrace();
+        } catch (XmlParserException e) {
+            e.printStackTrace();
+        } catch (InvalidBucketNameException e) {
+            e.printStackTrace();
+        } catch (ErrorResponseException e) {
+            e.printStackTrace();
+        }
         fileService.deleteById(id);
     }
 }
