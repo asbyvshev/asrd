@@ -11,6 +11,7 @@ import com.kropotov.asrd.entities.enums.Location;
 import com.kropotov.asrd.entities.enums.Status;
 import com.kropotov.asrd.entities.titles.SystemTitle;
 import lombok.*;
+import org.springframework.util.Assert;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -78,12 +79,17 @@ public class ControlSystem extends ItemEntity implements PageableEntity, IFiles 
     }
 
     @Override
-    public boolean addFile(File file) {
+    public boolean addFile(@NonNull File file) {
+
+        if (files == null) {
+            files = new ArrayList<>();
+        }
         return files.add(file);
     }
 
     @Override
-    public boolean removeFile(File file) {
+    public boolean removeFile(@NonNull File file) {
+        Assert.notNull(files,"The list of files not found!");
         return files.remove(file);
     }
 }

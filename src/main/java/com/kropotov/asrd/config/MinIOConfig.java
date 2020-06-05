@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-// todo пока что настройки закомментированы
+
  @Configuration
 public class MinIOConfig {
     @Value("${minio.access.name}")
@@ -23,6 +23,5 @@ public class MinIOConfig {
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
-
     }
 }
