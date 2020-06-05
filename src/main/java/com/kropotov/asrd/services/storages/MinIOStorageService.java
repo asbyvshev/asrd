@@ -16,22 +16,22 @@ public class MinIOStorageService {
         this.minioClient = minioClient;
     }
 
-    public String store(String bucketName, MultipartFile file) {
-        try {
-            if (!minioClient.bucketExists(bucketName)) {
-                minioClient.makeBucket(bucketName);
-            }
-            String filename = StringUtils.cleanPath(file.getOriginalFilename());
-            try (InputStream inputStream = file.getInputStream()) {
-                minioClient.putObject(bucketName, filename, inputStream, "application/octet-stream");
-                System.out.println(minioClient.getObjectUrl(bucketName, filename));
-                System.out.println(minioClient.presignedGetObject(bucketName, filename));
-                return minioClient.presignedGetObject(bucketName, filename);
-            } catch (IOException e) {
-                throw new StorageException("Failed to store file " + filename, e);
-            }
-        } catch (Exception e) {
-            throw new StorageException("Failed to store file ", e);
-        }
-    }
+//    public String store(String bucketName, MultipartFile file) {
+//        try {
+//            if (!minioClient.bucketExists(bucketName)) {
+//                minioClient.makeBucket(bucketName);
+//            }
+//            String filename = StringUtils.cleanPath(file.getOriginalFilename());
+//            try (InputStream inputStream = file.getInputStream()) {
+//                minioClient.putObject(bucketName, filename, inputStream, "application/octet-stream");
+//                System.out.println(minioClient.getObjectUrl(bucketName, filename));
+//                System.out.println(minioClient.presignedGetObject(bucketName, filename));
+//                return minioClient.presignedGetObject(bucketName, filename);
+//            } catch (IOException e) {
+//                throw new StorageException("Failed to store file " + filename, e);
+//            }
+//        } catch (Exception e) {
+//            throw new StorageException("Failed to store file ", e);
+//        }
+//    }
 }
