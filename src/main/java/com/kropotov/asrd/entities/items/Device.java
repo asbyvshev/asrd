@@ -84,12 +84,15 @@ public class Device extends ItemEntity implements PageableEntity, IFiles {
     }
 
     @Override
-    public boolean addFile(File file) {
+    public boolean addFile(@NonNull File file) {
+        if (files == null) {
+            files = new ArrayList<>();
+        }
         return files.add(file);
     }
 
     @Override
-    public boolean removeFile(File file) {
-       return files.remove(file);
+    public boolean removeFile(@NonNull File file) {
+        return files.remove(file);
     }
 }
