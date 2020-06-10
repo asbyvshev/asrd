@@ -31,7 +31,7 @@ public class MinIOServiceImp implements MinIOService {
 
         InputStream stream = file.getInputStream();
         Long fileSize = file.getSize();
-        PutObjectOptions options = new PutObjectOptions(fileSize, fileSize);
+        PutObjectOptions options = new PutObjectOptions(fileSize, -1);
         try {
             minioClient.putObject(bucketname,filename,stream,options);
             log.info("File {} has been succesfully uploaded!", filename);
@@ -52,8 +52,6 @@ public class MinIOServiceImp implements MinIOService {
         } catch (XmlParserException e) {
             e.printStackTrace();
         }
-
-
     }
 
     @Override
