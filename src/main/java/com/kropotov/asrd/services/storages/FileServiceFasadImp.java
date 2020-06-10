@@ -59,9 +59,11 @@ public class FileServiceFasadImp implements FileServiceFasad {
     @Override
     public void uploadFile (MultipartFile file, String userFileName, FileType type) throws IOException {
         Assert.notNull(file,"fdgdfg");
-        String fileName = type.getDirectory() + currentDate() + "." + determineFileExtension(file);
-        minIOService.uploadFile(file, fileName, type.getDirectory());
-        fileService.save(new File(fileName, userFileName, type));
+//        String fileName = type.getDirectory() + currentDate() + "." + determineFileExtension(file);
+//        minIOService.uploadFile(file, fileName, type.getDirectory());
+//        fileService.save(new File(fileName, userFileName, type));
+        String bucket ="asbyvshev-test-bucket";
+        minIOService.uploadFile(file,bucket,"1234/"+userFileName);
     }
 
     @Override
