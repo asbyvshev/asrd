@@ -1,7 +1,8 @@
 package com.kropotov.asrd.controllers;
 
+import com.kropotov.asrd.entities.docs.File;
 import com.kropotov.asrd.services.StorageService;
-import com.kropotov.asrd.services.storages.FileServiceFasadImp;
+import com.kropotov.asrd.facades.FileServiceFacadeImp;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -20,7 +21,7 @@ import java.nio.file.Files;
 @RequestMapping("/files")
 public class FileController {
     private final StorageService storageService;
-    private final FileServiceFasadImp fileServiceFasadImp;
+    private final FileServiceFacadeImp fileServiceFacadeImp;
 
     @GetMapping(value = "/{path}/{filename}")
     public ResponseEntity<byte[]> redirectToGetFile(@PathVariable String path, @PathVariable("filename") String filename) {
@@ -64,8 +65,18 @@ public class FileController {
 
 //    @ApiOperation(value = "Добавить новый продукт на витрину.", response = String.class)
     @PostMapping("/minioAdd")
-    public String addOne(@RequestParam("doc") MultipartFile file,@RequestParam("title") String filename) throws IOException {
-        fileServiceFasadImp.uploadFile(file,filename,null);
+    public String addOne(@RequestParam("doc") MultipartFile doc, File file/*,@RequestParam("title") String filename*/) {
+        fileServiceFacadeImp.uploadFile(doc,file);
+        return "redirect:/files/";
+    }
+
+    @PostMapping("/minioAdd1")
+    public String addOne1(@RequestParam("doc") MultipartFile doc, @RequestParam("title") String filename) {
+        try {
+            fileServiceFacadeImp.up(doc,filename);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return "redirect:/files/";
     }
 }

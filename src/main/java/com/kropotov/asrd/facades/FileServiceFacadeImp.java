@@ -1,10 +1,12 @@
-package com.kropotov.asrd.services.storages;
+package com.kropotov.asrd.facades;
 
 import com.kropotov.asrd.entities.docs.File;
-import com.kropotov.asrd.entities.docs.util.FileType;
-import com.kropotov.asrd.services.FileServiceFasad;
+import com.kropotov.asrd.services.FileService;
+import com.kropotov.asrd.services.MinIOService;
 
+import com.kropotov.asrd.services.storages.MinIOServiceImp;
 import io.minio.errors.*;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,9 +26,9 @@ import java.util.Objects;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class FileServiceFasadImp implements FileServiceFasad {
+public class FileServiceFacadeImp implements FileServiceFacade {
 
-    private final FileServiceImpl fileService;
+    private final FileService fileService;
     private final MinIOServiceImp minIOService;
 
     private String currentDate(){
@@ -57,17 +59,17 @@ public class FileServiceFasadImp implements FileServiceFasad {
     }
 
     @Override
-    public void uploadFile (MultipartFile file, String userFileName, FileType type) throws IOException {
-        Assert.notNull(file,"fdgdfg");
+    public void uploadFile (MultipartFile doc, File file/*String userFileName, FileType type*/) /*throws IOException*/ {
+        Assert.notNull(doc,"No file selected!");
 //        String fileName = type.getDirectory() + currentDate() + "." + determineFileExtension(file);
 //        minIOService.uploadFile(file, fileName, type.getDirectory());
 //        fileService.save(new File(fileName, userFileName, type));
-        String bucket ="asbyvshev-test-bucket";
-        minIOService.uploadFile(file,bucket,"1234/"+userFileName);
+//        String bucket ="asbyvshev-test-bucket";
+//        minIOService.uploadFile(file,bucket,"1234/"+userFileName);
+//        findObject(bucket,userFileName);
     }
 
     @Override
-    @Transactional
     public byte[] downloadFile(Long id) {
         File file = fileService.getById(id).get();
         String bucket = file.getType().getDirectory();
@@ -123,5 +125,46 @@ public class FileServiceFasadImp implements FileServiceFasad {
             e.printStackTrace();
         }
         fileService.deleteById(id);
+    }
+
+    private void findObject(String b,String f){
+        try {
+            System.out.println(minIOService.getUrl(b, f));
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (InvalidResponseException e) {
+            e.printStackTrace();
+        } catch (InsufficientDataException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (InternalException e) {
+            e.printStackTrace();
+        } catch (XmlParserException e) {
+            e.printStackTrace();
+        } catch (InvalidBucketNameException e) {
+            e.printStackTrace();
+        } catch (ErrorResponseException e) {
+            e.printStackTrace();
+        }
+    }
+    public void up (MultipartFile doc, String userFileName) throws IOException {
+        if (doc.isEmpty()) {
+            throw new IOException("no file selected");
+        }
+//        System.out.println(doc);
+
+        String bucket ="asbyvshev-test-bucket";
+//        findObject(bucket,userFileName);
+        try {
+
+            minIOService.uploadFile(doc,bucket,userFileName);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }
