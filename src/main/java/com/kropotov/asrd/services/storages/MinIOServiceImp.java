@@ -106,7 +106,9 @@ public class MinIOServiceImp implements MinIOService {
         try {
             Iterable<Result<Item>> list = minioClient.listObjects(bucket);
             for (Result r:list) {
-                if (r.get().equals(file)){return true;}
+                Item item = (Item) r.get();
+                System.out.println(item.objectName());
+                if (item.objectName().equals(file)){return true;}
             }
         } catch (XmlParserException e) {
             e.printStackTrace();

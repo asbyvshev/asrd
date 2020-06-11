@@ -1,6 +1,7 @@
 package com.kropotov.asrd.facades;
 
 import com.kropotov.asrd.entities.docs.File;
+import com.kropotov.asrd.exceptions.StorageException;
 import com.kropotov.asrd.services.FileService;
 import com.kropotov.asrd.services.MinIOService;
 
@@ -157,14 +158,14 @@ public class FileServiceFacadeImp implements FileServiceFacade {
 //        System.out.println(doc);
 
         String bucket ="asbyvshev-test-bucket";
-//        findObject(bucket,userFileName);
-        try {
-
-            minIOService.uploadFile(doc,bucket,userFileName);
-
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (minIOService.fileExists(bucket,userFileName)){
+            throw new StorageException("file is already exist!");
+        }else {
+            try {
+                minIOService.uploadFile(doc, bucket, userFileName);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-
     }
 }
