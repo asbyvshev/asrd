@@ -97,18 +97,39 @@ public class MinIOServiceImp implements MinIOService {
         return results;
     }
 
-    public String getUrl (String b,String f) throws IOException, InvalidKeyException, InvalidResponseException, InsufficientDataException, NoSuchAlgorithmException, InternalException, XmlParserException, InvalidBucketNameException, ErrorResponseException {
-//        return minioClient.getObjectUrl(b,f);
+    @Override
+    public String getUrl (String bucket,String filename) {
+        try {
+            return minioClient.getObjectUrl(bucket,filename);
+        } catch (ErrorResponseException e) {
+            e.printStackTrace();
+        } catch (InsufficientDataException e) {
+            e.printStackTrace();
+        } catch (InternalException e) {
+            e.printStackTrace();
+        } catch (InvalidBucketNameException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (InvalidResponseException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (XmlParserException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 
-    public boolean fileExists (String bucket,String file){
+    @Override
+    public boolean fileExists (String bucket,String filename){
         try {
             Iterable<Result<Item>> list = minioClient.listObjects(bucket);
             for (Result r:list) {
                 Item item = (Item) r.get();
-                System.out.println(item.objectName());
-                if (item.objectName().equals(file)){return true;}
+                if (item.objectName().equals(filename)){return true;}
             }
         } catch (XmlParserException e) {
             e.printStackTrace();

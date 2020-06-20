@@ -65,7 +65,7 @@ public class FileController {
 
 //    @ApiOperation(value = "Добавить новый продукт на витрину.", response = String.class)
     @PostMapping("/minioAdd")
-    public String addOne(@RequestParam("doc") MultipartFile doc, File file/*,@RequestParam("title") String filename*/) {
+    public String addOne(@RequestParam("doc") MultipartFile doc, File file) {
         fileServiceFacadeImp.uploadFile(doc,file);
         return "redirect:/files/";
     }
