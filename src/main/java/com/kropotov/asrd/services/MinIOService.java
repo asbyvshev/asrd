@@ -10,7 +10,8 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
 public interface MinIOService {
-
+    boolean fileExists (String bucket,String filename);
+    String getUrl (String bucket,String filename);
     void uploadFile(MultipartFile file, String bucketname, String filename) throws IOException;
     byte[] downloadFile(String bucketname,String filename) throws IOException, InvalidKeyException, InvalidResponseException, InsufficientDataException, NoSuchAlgorithmException, InternalException, XmlParserException, InvalidBucketNameException, ErrorResponseException;
     void deleteFile(String bucketname,String filename) throws IOException, InvalidKeyException, InvalidResponseException, InsufficientDataException, NoSuchAlgorithmException, InternalException, XmlParserException, InvalidBucketNameException, ErrorResponseException;
