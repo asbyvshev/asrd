@@ -9,6 +9,7 @@ import com.kropotov.asrd.entities.User;
 import com.kropotov.asrd.entities.enums.Location;
 import com.kropotov.asrd.entities.items.Device;
 import com.kropotov.asrd.entities.titles.DeviceTitle;
+import com.kropotov.asrd.facades.FileServiceFacade;
 import com.kropotov.asrd.services.UserService;
 import com.kropotov.asrd.services.springdatajpa.items.DeviceComponentService;
 import com.kropotov.asrd.services.springdatajpa.items.DeviceService;
@@ -67,6 +68,8 @@ public class DeviceControllerTest {
 	private DeviceToDto deviceToDto;
 	@Mock
 	private DtoToDevice dtoToDevice;
+	@Mock
+	private FileServiceFacade fileServiceFacade;
 
 	@Autowired
 	WebApplicationContext context;
@@ -75,7 +78,7 @@ public class DeviceControllerTest {
 	void setUp() {
 		MockitoAnnotations.initMocks(this);
 		deviceController = new DeviceController(deviceService, deviceTitleService, userService, topicService,
-				deviceComponentService, systemService, deviceComponentTitleService, userToSimple, deviceToDto, dtoToDevice);
+				deviceComponentService, systemService, deviceComponentTitleService, userToSimple, deviceToDto, dtoToDevice,fileServiceFacade);
 	}
 
 	@Test
