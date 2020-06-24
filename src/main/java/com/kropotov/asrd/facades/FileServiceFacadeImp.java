@@ -1,7 +1,9 @@
 package com.kropotov.asrd.facades;
 
 import com.kropotov.asrd.entities.docs.File;
+import com.kropotov.asrd.entities.docs.util.FileType;
 import com.kropotov.asrd.exceptions.StorageException;
+import com.kropotov.asrd.repositories.FileTypeRepository;
 import com.kropotov.asrd.services.FileService;
 import com.kropotov.asrd.services.MinIOService;
 
@@ -18,6 +20,8 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -27,6 +31,7 @@ public class FileServiceFacadeImp implements FileServiceFacade {
 
     private final FileService fileService;
     private final MinIOService minIOService;
+    private final FileTypeRepository fileTypeRepository;
 
     @Override
     public File uploadFile (MultipartFile doc, File file)  {
@@ -35,7 +40,8 @@ public class FileServiceFacadeImp implements FileServiceFacade {
             throw new StorageException("No file selected!");
         }
 
-        String bucket = file.getType().getDirectory();
+//        String bucket = file.getType().getDirectory();
+        String bucket ="asbyvshev-test-bucket";
         String fileName = createFileName(bucket,doc.getOriginalFilename());
         file.setTitle(fileName);
 
@@ -105,6 +111,11 @@ public class FileServiceFacadeImp implements FileServiceFacade {
         } catch (ErrorResponseException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public Optional<List<FileType>> getAllFileTypes() {
+        return Optional.ofNullable(fileTypeRepository.findAll());
     }
 
     // TODO: 20.06.2020 если потребуется возвращать ссылку
