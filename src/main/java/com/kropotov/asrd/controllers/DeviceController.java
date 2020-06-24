@@ -8,6 +8,7 @@ import com.kropotov.asrd.converters.items.DeviceToDto;
 import com.kropotov.asrd.converters.items.DtoToDevice;
 import com.kropotov.asrd.dto.items.DeviceDto;
 import com.kropotov.asrd.entities.items.Device;
+import com.kropotov.asrd.facades.FileServiceFacade;
 import com.kropotov.asrd.services.UserService;
 import com.kropotov.asrd.services.springdatajpa.items.DeviceComponentService;
 import com.kropotov.asrd.services.springdatajpa.items.DeviceService;
@@ -23,6 +24,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.ArrayList;
 
 @Controller
 @RequestMapping("/devices")
@@ -39,6 +41,7 @@ public class DeviceController {
     private final UserToSimple userToSimple;
     private final DeviceToDto deviceToDto;
     private final DtoToDevice dtoToDevice;
+    private final FileServiceFacade fileServiceFacade;
 
     @GetMapping
     public String displayDevices(Model model, Pageable pageable) {
@@ -79,7 +82,7 @@ public class DeviceController {
 
         model.addAttribute("systemTitles", deviceDto.getDeviceTitle().getSystemTitles());
         model.addAttribute("device", deviceDto);
-
+        model.addAttribute("fileTypes",fileServiceFacade.getAllFileTypes().orElse(new ArrayList<>()));
         return "devices/edit-device";
     }
 
