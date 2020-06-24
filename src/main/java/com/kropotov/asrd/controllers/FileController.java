@@ -1,6 +1,7 @@
 package com.kropotov.asrd.controllers;
 
 import com.kropotov.asrd.entities.docs.File;
+import com.kropotov.asrd.facades.FileServiceFacade;
 import com.kropotov.asrd.services.StorageService;
 import com.kropotov.asrd.facades.FileServiceFacadeImp;
 import lombok.RequiredArgsConstructor;
@@ -10,11 +11,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
 
 @RequiredArgsConstructor
 @Controller
@@ -22,6 +25,7 @@ import java.nio.file.Files;
 public class FileController {
     private final StorageService storageService;
     private final FileServiceFacadeImp fileServiceFacadeImp;
+
 
     @GetMapping(value = "/{path}/{filename}")
     public ResponseEntity<byte[]> redirectToGetFile(@PathVariable String path, @PathVariable("filename") String filename) {
@@ -58,11 +62,13 @@ public class FileController {
     }
 
     @GetMapping(value = "/", produces = MediaType.TEXT_HTML_VALUE)
-    public String showAddFile (){
+    public String showAddFile (Model model){
+        model.addAttribute("fileTypes",
+                fileServiceFacadeImp.getAllFileTypes().orElse(new ArrayList<>()));
         return "minio";
     }
 
-
+    // TODO: 21.06.2020 сделать добавление сохраненного файла в список файлов прибора 
 //    @ApiOperation(value = "Добавить новый продукт на витрину.", response = String.class)
     @PostMapping("/minioAdd")
     public String addOne(@RequestParam("doc") MultipartFile doc, File file) {
