@@ -33,7 +33,7 @@ public class ControlSystem extends ItemEntity implements PageableEntity, IFiles 
                          @NotNull(message = "Number cannot be null") String number, Location location, String purpose, String purposePassport,
                          LocalDate vintage, int vpNumber, LocalDate otkDate, LocalDate vpDate, SystemTitle title,
                          @NotNull(message = "User cannot be null") User user, List<ActInputControl> actsInputControl,
-                         List<Invoice> invoices, List<Device> devices) {
+                         List<Invoice> invoices, List<Device> devices,List<File> files) {
 
         super(id, entityStatus, createdAt, updatedAt, number, location, purpose, purposePassport, vintage, vpNumber, otkDate, vpDate);
         this.title = title;
@@ -41,6 +41,7 @@ public class ControlSystem extends ItemEntity implements PageableEntity, IFiles 
         this.actsInputControl = actsInputControl;
         this.invoices = invoices;
         this.devices = devices;
+        this.files = files;
     }
 
     // @NotNull(message = "Title cannot be null")
@@ -85,6 +86,14 @@ public class ControlSystem extends ItemEntity implements PageableEntity, IFiles 
             files = new ArrayList<>();
         }
         return files.add(file);
+    }
+
+    @Override
+    public boolean addAllFiles(List<File> filesList) {
+        if (files == null) {
+            files = new ArrayList<>();
+        }
+        return this.files.addAll(filesList);
     }
 
     @Override
