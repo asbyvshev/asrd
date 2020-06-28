@@ -34,7 +34,7 @@ public class Device extends ItemEntity implements PageableEntity, IFiles {
                   @NotNull(message = "Number cannot be null") String number, Location location, String purpose,
                   String purposePassport, LocalDate vintage, int vpNumber, LocalDate otkDate, LocalDate vpDate,
                   DeviceTitle title, ControlSystem system, List<DeviceComponent> components, List<Invoice> invoices,
-                  List<ActInputControl> actsInputControl, User user) {
+                  List<ActInputControl> actsInputControl, User user,List<File> files) {
 
         super(id, entityStatus, createdAt, updatedAt, number, location, purpose, purposePassport, vintage, vpNumber, otkDate, vpDate);
         this.title = title;
@@ -43,6 +43,7 @@ public class Device extends ItemEntity implements PageableEntity, IFiles {
         this.invoices = invoices;
         this.actsInputControl = actsInputControl;
         this.user = user;
+        this.files = files;
     }
 
 
@@ -89,6 +90,14 @@ public class Device extends ItemEntity implements PageableEntity, IFiles {
             files = new ArrayList<>();
         }
         return files.add(file);
+    }
+
+    @Override
+    public boolean addAllFiles(List<File> filesList) {
+        if (files == null) {
+            files = new ArrayList<>();
+        }
+        return this.files.addAll(filesList);
     }
 
     @Override

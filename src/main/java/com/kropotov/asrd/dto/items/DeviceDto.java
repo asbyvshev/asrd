@@ -1,6 +1,7 @@
 package com.kropotov.asrd.dto.items;
 
 import com.kropotov.asrd.dto.SimpleUser;
+import com.kropotov.asrd.entities.docs.File;
 import com.kropotov.asrd.entities.enums.Location;
 import com.kropotov.asrd.entities.titles.DeviceTitle;
 import lombok.*;
@@ -27,6 +28,7 @@ public class DeviceDto {
     private SimpleControlSystem system;
     private List<SimpleDeviceComponent> components = new ArrayList<>();
     private SimpleUser user;
+    private List<File> files;
 //    private List<Long> invoicesId;
 //    private List<Long> actsId;
 
@@ -35,5 +37,12 @@ public class DeviceDto {
             components = new ArrayList<>();
         }
         components.add(simpleDeviceComponent);
+    }
+
+    public boolean addFile(@NonNull File file) {
+        if (files == null) {
+            files = new ArrayList<>();
+        }
+        return files.add(file);
     }
 }

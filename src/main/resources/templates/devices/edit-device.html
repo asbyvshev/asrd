@@ -140,7 +140,7 @@
 <!--        <div>-->
             <h3>Паспорт</h3>
 <!--        Динамический список должен быть тут-->
-            <form class="form-horizontal" action="#" th:action="@{/files/minioAdd}" th:object="${file}" method="POST" enctype="multipart/form-data">
+            <form class="form-horizontal" action="#" th:action="@{/files/minioAdd2}" th:object="${file}" method="POST" enctype="multipart/form-data">
                 <div class="input-group mb-2">
                     <select class="custom-select" name="type">
                         <option th:each="typeValue : ${fileTypes}"
