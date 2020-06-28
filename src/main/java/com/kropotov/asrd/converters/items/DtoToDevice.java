@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Optional;
 
 @Component
@@ -56,6 +57,7 @@ public class DtoToDevice implements Converter<DeviceDto, Device> {
                 .vpDate((source.getVpDate() == null || source.getVpDate().equals("")) ? null : LocalDate.parse(source.getVpDate(), dateFormatter))
                 .vpNumber(source.getVpNumber())
                 .user(simpleToUser.convert(source.getUser()))
+                .files(source.getFiles() != null ? source.getFiles() : new ArrayList<>())
             .build();
 
         if (source.getSystem().getNumber() != null && !source.getSystem().getNumber().equals("")) {

@@ -51,6 +51,7 @@ public class DeviceToDto implements Converter<Device, DeviceDto> {
                 .vpNumber(source.getVpNumber())
                 .system(controlSystemToSimple.convert(source.getSystem()))
                 .user(userToSimple.convert(source.getUser()))
+                .files(source.getFiles() != null ? source.getFiles() : new ArrayList<>())
             .build();
 
         List<DeviceComponentTitle> deviceComponentTitles = source.getTitle().getComponentTitles();

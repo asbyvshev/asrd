@@ -1,5 +1,6 @@
 package com.kropotov.asrd.controllers;
 
+import com.kropotov.asrd.dto.items.DeviceDto;
 import com.kropotov.asrd.entities.docs.File;
 import com.kropotov.asrd.facades.FileServiceFacade;
 import com.kropotov.asrd.services.StorageService;
@@ -15,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -23,8 +25,10 @@ import java.util.ArrayList;
 @Controller
 @RequestMapping("/files")
 public class FileController {
+
     private final StorageService storageService;
     private final FileServiceFacadeImp fileServiceFacadeImp;
+    private final FileServiceFacade fileServiceFacade;
 
 
     @GetMapping(value = "/{path}/{filename}")
@@ -64,7 +68,7 @@ public class FileController {
     @GetMapping(value = "/", produces = MediaType.TEXT_HTML_VALUE)
     public String showAddFile (Model model){
         model.addAttribute("fileTypes",
-                fileServiceFacadeImp.getAllFileTypes().orElse(new ArrayList<>()));
+                fileServiceFacade.getAllFileTypes().orElse(new ArrayList<>()));
         return "minio";
     }
 
@@ -72,8 +76,20 @@ public class FileController {
 //    @ApiOperation(value = "Добавить новый продукт на витрину.", response = String.class)
     @PostMapping("/minioAdd")
     public String addOne(@RequestParam("doc") MultipartFile doc, File file) {
-        fileServiceFacadeImp.uploadFile(doc,file);
+        fileServiceFacade.uploadFile(doc,file);
         return "redirect:/files/";
+    }
+
+    @PostMapping("/minioAdd2")
+    public String addOne2(@ModelAttribute("device") DeviceDto deviceDto, @RequestParam("doc") MultipartFile doc,
+                          File file, Model model, HttpServletRequest request) {
+
+        DeviceDto sessionDevice = (DeviceDto) request.getSession().getAttribute("device");
+        sessionDevice.addFile(fileServiceFacade.uploadFile(doc,file));
+        deviceDto.setFiles(sessionDevice.getFiles());
+        model.addAttribute("device",deviceDto);
+
+        return "devices/edit-device";
     }
 
     @PostMapping("/minioAdd1")
