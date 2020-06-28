@@ -45,7 +45,7 @@ public class SystemServiceTest {
 				"1", Location.SGP, "test purpose 1", "test purpose passport 1",
 				LocalDate.now(), 1, LocalDate.now(), LocalDate.now(), new SystemTitle(),
 				new User(), null,
-				null, null);
+				null, null,null);
 		List<ControlSystem> expectedSystems = Collections.singletonList(expectedSystem);
 
 		Pageable expectedPageable = PageRequest.of(0, 10, Sort.by("id").descending());

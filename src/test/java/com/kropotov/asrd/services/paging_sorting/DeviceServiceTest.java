@@ -45,7 +45,7 @@ public class DeviceServiceTest {
 				"1", Location.SGP, "test purpose 1",
 				"test purpose passport 1", LocalDate.now(), 1, LocalDate.now(), LocalDate.now(),
 				new DeviceTitle(), null, null, null,
-				null, new User());
+				null, new User(),null);
 		List<Device> expectedDevices = Collections.singletonList(expectedDevice);
 
 		Pageable expectedPageable = PageRequest.of(0, 10, Sort.by("id").descending());
